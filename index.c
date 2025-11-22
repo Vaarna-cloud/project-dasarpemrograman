@@ -469,6 +469,156 @@ void tampil_peminjam() {
                daftarPeminjam[i].tanggal_pengembalian,
                daftarPeminjam[i].denda);
     }
-
     printf("-----------------------------------------------------------------------------------------------------------------------------\n");
+}
+
+// Function untuk mengurutkan data buku dan peminjam
+void sorting_data() {
+    Buku tempBuku[MAX_BUKU];
+    Peminjam tempPeminjam[MAX_PEMINJAM];
+
+    int i, j, pilihan;
+
+    for (i = 0; i < jumlahBuku; i++) {
+        tempBuku[i] = daftarBuku[i];
+    }
+
+    for (i = 0; i < jumlahPeminjam; i++) {
+        tempPeminjam[i] = daftarPeminjam[i];
+    }
+
+    printf("\n1. Sorting data buku ASC.\n");
+    printf("2. Sorting data buku DESC.\n");
+    printf("3. Sorting data peminjam ASC.\n");
+    printf("4. Sorting data peminjam DESC.\n");
+
+    printf("Pilihan: ");
+    scanf("%d", &pilihan);
+
+    // Sorting data berdasarkan judul buku
+    if (pilihan == 1 || pilihan == 2) {
+        for (i = 0; i < jumlahBuku - 1; i++) {
+            for (j = 0; j < jumlahBuku - i - 1; j++) {
+
+                int cmp = strcmp(tempBuku[j].judul, tempBuku[j + 1].judul);
+
+                if ((pilihan == 1 && cmp > 0) || (pilihan == 2 && cmp < 0)) {
+
+                    Buku swap = tempBuku[j];
+                    tempBuku[j] = tempBuku[j + 1];
+                    tempBuku[j + 1] = swap;
+                }
+            }
+        }
+
+        // Tampilkan hasil sorting berdasarkan judul buku
+        printf("\n--- HASIL SORTING DATA BUKU ---\n");
+        printf("-------------------------------------------------------------------------------------------------\n");
+        printf("| %-40s | %-20s | %-12s | %-10s |\n",
+           "Judul", "Penulis", "Tahun Terbit", "Status");
+        printf("-------------------------------------------------------------------------------------------------\n");
+
+        for (i = 0; i < jumlahBuku; i++) {
+            printf("| %-40s | %-20s | %-12d | %-10s |\n",
+                   tempBuku[i].judul,
+                   tempBuku[i].penulis,
+                   tempBuku[i].tahun_terbit,
+                   tempBuku[i].status == 1 ? "Tersedia" : "Dipinjam");
+        }
+
+        printf("-------------------------------------------------------------------------------------------------\n");
+    } else if (pilihan == 3 || pilihan == 4) { // Sorting data berdasarkan nama peminjam
+        for (i = 0; i < jumlahPeminjam - 1; i++) {
+            for (j = 0; j < jumlahPeminjam - i - 1; j++) {
+
+                int cmp = strcmp(tempPeminjam[j].nama, tempPeminjam[j + 1].nama);
+
+                if ((pilihan == 3 && cmp > 0) || (pilihan == 4 && cmp < 0)) {
+
+                    Peminjam swap = tempPeminjam[j];
+                    tempPeminjam[j] = tempPeminjam[j + 1];
+                    tempPeminjam[j + 1] = swap;
+                }
+            }
+        }
+
+        // Tampilkan hasil sorting berdasarkan nama peminjam 
+        printf("\n--- HASIL SORTING DATA PEMINJAM ---\n");
+        printf("-----------------------------------------------------------------------------------------------------------------------------\n");
+        printf("| %-20s | %-15s | %-20s | %-20s | %-20s | %-7s |\n",
+           "Nama", "NIM", "Judul Buku", "Tanggal Pinjam", "Tanggal Kembali", "Denda");
+        printf("-----------------------------------------------------------------------------------------------------------------------------\n");
+
+        for (i = 0; i < jumlahPeminjam; i++) {
+            printf("| %-20s | %-15s | %-20s | %-20s | %-20s | %-7d |\n",
+                   tempPeminjam[i].nama,
+                   tempPeminjam[i].nim,
+                   tempPeminjam[i].judul_buku,
+                   tempPeminjam[i].tanggal_peminjaman,
+                   tempPeminjam[i].tanggal_pengembalian,
+                   tempPeminjam[i].denda);
+        }
+
+        printf("-----------------------------------------------------------------------------------------------------------------------------\n");
+    } else {
+        printf("Pilihan sorting tidak valid.\n");
+    }
+}
+
+// Function untuk mencari data buku atau peminjam
+void searching_data() {
+    int pilihan;
+    char keyword[100];
+    int found = 0;
+
+    printf("\n1. Searching judul buku\n");
+    printf("2. Searching nama peminjam\n");
+
+    printf("Pilihan: ");
+    scanf("%d", &pilihan);
+    while (getchar() != '\n');
+
+    if (pilihan != 1 && pilihan != 2) {
+        printf("Pilihan searching tidak valid.\n");
+        return;
+    }
+
+    printf("Masukkan kata kunci: ");
+    fgets(keyword, sizeof(keyword), stdin);
+    keyword[strcspn(keyword, "\n")] = 0;
+
+    // Searching data berdasarjan judul buku
+    if (pilihan == 1) {
+        printf("\nHasil pencarian buku:\n");
+        for (int i = 0; i < jumlahBuku; i++) {
+            if (strstr(daftarBuku[i].judul, keyword) != NULL) {
+                printf("%s (Penulis: %s, Tahun: %d, Status: %s)\n",
+                       daftarBuku[i].judul,
+                       daftarBuku[i].penulis,
+                       daftarBuku[i].tahun_terbit,
+                       daftarBuku[i].status == 1 ? "Tersedia" : "Dipinjam");
+
+                found = 1;
+            }
+        }
+    } else if (pilihan == 2) { // Searching data berdasarkan nama peminjam
+        printf("\nHasil pencarian peminjam:\n");
+        for (int i = 0; i < jumlahPeminjam; i++) {
+            if (strstr(daftarPeminjam[i].nama, keyword) != NULL) {
+                printf("%s | NIM: %s | Pinjam Buku: %s | Tanggal Peminjaman: %s | Tanggal Pengembalian: %s | Denda: %d \n",
+                       daftarPeminjam[i].nama,
+                       daftarPeminjam[i].nim,
+                       daftarPeminjam[i].judul_buku,
+                       daftarPeminjam[i].tanggal_peminjaman,
+                       daftarPeminjam[i].tanggal_pengembalian,
+                       daftarPeminjam[i].denda);
+
+                found = 1;
+            }
+        }
+    } 
+
+    if (!found) {
+        printf("Data tidak ditemukan.\n");
+    }
 }
